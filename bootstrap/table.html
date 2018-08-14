@@ -1,0 +1,21 @@
+{{define "table"}}
+<table border="1px" bordercolor="#000000" cellspacing="0px" style="border-collapse:collapse" align="center">
+    <caption>{{.TableName}}</caption>
+    <thead>
+    <tr>
+    {{range .HeadNameList}}
+        <th align="center">{{ . }}</th>{{end}}
+
+    </tr>
+    </thead>
+    <tbody>
+
+    {{range  $i, $v :=.Data}}
+    <tr>
+    {{range $ii, $vv := $v }}
+        <td bgcolor={{confirmGridColor $vv $ii $.HeadNameList $.ParaData}} align="center"> {{$vv}}</td>{{end}}
+    </tr>
+    {{end}}
+    </tbody>
+</table>
+{{end}}
