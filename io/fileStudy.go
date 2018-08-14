@@ -1,5 +1,5 @@
 package main
-//偷偷改一下
+
 import (
 	"bufio" //缓存IO
 	"fmt"

@@ -7,13 +7,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net"
 	"strings"
 	"time"
 	"sync"
+	"bufio"
 )
 
 //func echo(c net.Conn, shout string, delay time.Duration) {
@@ -26,24 +26,51 @@ import (
 
 //!+
 func handleConn(c net.Conn) {
+	message := make(chan string)
+	//tick := time.NewTicker(10 * time.Second)
 	input := bufio.NewScanner(c)
+	//input.Scan()
 	var wg sync.WaitGroup
-	for input.Scan() {
-		wg.Add(1)
-		go func(c net.Conn, shout string, delay time.Duration) {
-			defer wg.Done()
-			fmt.Fprintln(c, "\t", strings.ToUpper(shout))
-			time.Sleep(delay)
-			fmt.Fprintln(c, "\t", shout)
-			time.Sleep(delay)
-			fmt.Fprintln(c, "\t", strings.ToLower(shout))
-		}(c, input.Text(), 1*time.Second)
+	//flag := input.Scan()
+	//var flag bool = true
+	wg.Add(1)
+	/*
+	1.启动一个goroutine,for死循环让他不能断掉
+	select语句case判断两个channel
+	一个是10秒后断掉连接
+	另一个是接收标准输入后发送过来的channel，接收到值后，启动goroutinue输出
 
+	2.for循环接收标准输入，接收到后发送给message的channel
+	*/
+	go func() {
+		wg.Done()
+		for {
+			select {
+			case <-time.After(time.Second * 10):
+				c.Close()
+			case mes := <-message:
+				wg.Add(1)
+				go func(c net.Conn, shout string, delay time.Duration) {
+					defer wg.Done()
+					fmt.Fprintln(c, "\t", strings.ToUpper(shout))
+					time.Sleep(delay)
+					fmt.Fprintln(c, "\t", shout)
+					time.Sleep(delay)
+					fmt.Fprintln(c, "\t", strings.ToLower(shout))
+				}(c, mes, 1*time.Second)
+			}
+		}
+
+	}()
+
+	for input.Scan() {
+		text := input.Text()
+		message <- text
 	}
 	// NOTE: ignoring potential errors from input.Err()
 	wg.Wait()
-	cw := c.(*net.TCPConn)
-	cw.CloseWrite()
+	//cw := c.(*net.TCPConn)
+	//cw.CloseWrite()
 }
 
 //!-
