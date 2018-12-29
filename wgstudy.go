@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
+	"time"
 )
 
 func main() {
@@ -13,6 +15,7 @@ func main() {
 		wg.Add(1)
 		go func(i int) {
 			ch<-i
+			fmt.Println(time.Now().UTC())
 			wg.Done()
 		}(i)
 	}
