@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+)
 
 func main() {
 	// 先定义一个数组
@@ -20,5 +23,20 @@ func main() {
 	for _, v := range mySlice {
 		fmt.Print(v, " ")
 	}
-	fmt.Println()
+	nums := [3]int{}
+	nums[0] = 1
+
+	n := nums[0]
+	n = 2
+
+	fmt.Printf("nums: %v\n", nums)
+	fmt.Printf("n: %d\n", n)
+	fmt.Println(cap(nums))
+
+	dnums := nums[0:2]
+
+	fmt.Printf("dnums: %v", dnums)
+	fmt.Println(cap(dnums))
+	l:=make([]int,1,2)
+	fmt.Println(l)
 }
